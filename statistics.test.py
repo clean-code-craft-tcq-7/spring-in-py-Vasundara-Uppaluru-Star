@@ -17,6 +17,24 @@ class StatsTest(unittest.TestCase):
     self.assertTrue(math.isnan(computedStats["max"]))
     self.assertTrue(math.isnan(computedStats["min"]))
 
+  def test_ignore_nan_in_input(self):
+    computedStats = statistics.calculateStats([1.5, float('nan'), 3.2, 4.5])
+    epsilon = 0.001
+    self.assertAlmostEqual(computedStats["avg"], 3.0667, delta=epsilon)
+    self.assertAlmostEqual(computedStats["max"], 4.5, delta=epsilon)
+    self.assertAlmostEqual(computedStats["min"], 1.5, delta=epsilon)
+
+  def test_stats_are_nan_when_input_has_all_nan(self):
+    computedStats = statistics.calculateStats([float('nan'), float('nan')])
+    self.assertTrue(math.isnan(computedStats["avg"]))
+    self.assertTrue(math.isnan(computedStats["max"]))
+    self.assertTrue(math.isnan(computedStats["min"]))
+
+  def test_stats_are_nan_on_absurd_values(self):
+    computedStats = statistics.calculateStats([1e0, -1, 6.7, 1.4, 1e310, 1e300])
+    self.assertTrue(math.isnan(computedStats["avg"]))
+    self.assertTrue(math.isnan(computedStats["max"]))
+    self.assertTrue(math.isnan(computedStats["min"]))
 
 if __name__ == "__main__":
   unittest.main()
